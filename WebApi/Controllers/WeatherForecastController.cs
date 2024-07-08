@@ -21,6 +21,10 @@ namespace WebApi.Controllers
         [HttpGet(Name = "GetWeatherForecast")]
         public IEnumerable<WeatherForecast> Get()
         {
+            _logger.LogInformation("This is a first log entry");
+
+            throw new ArgumentOutOfRangeException("I failed on purpose");
+
             return Enumerable.Range(1, 5).Select(index => new WeatherForecast
             {
                 Date = DateOnly.FromDateTime(DateTime.Now.AddDays(index)),
