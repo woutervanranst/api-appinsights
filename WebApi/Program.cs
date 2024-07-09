@@ -9,6 +9,11 @@ public class Program
 
         builder.Services.AddApplicationInsightsTelemetry();
 
+        builder.Services.AddHttpClient("WebApi2", c =>
+        {
+            c.BaseAddress = new Uri("http://localhost:5233/");
+        });
+
         // Add services to the container.
 
         builder.Services.AddControllers();

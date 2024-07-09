@@ -12,10 +12,12 @@ namespace WebApi.Controllers
         };
 
         private readonly ILogger<WeatherForecastController> _logger;
+        private readonly IHttpClientFactory _clientFactory;
 
-        public WeatherForecastController(ILogger<WeatherForecastController> logger)
+        public WeatherForecastController(ILogger<WeatherForecastController> logger, IHttpClientFactory clientFactory)
         {
             _logger = logger;
+            _clientFactory = clientFactory;
         }
 
         [HttpGet(Name = "GetWeatherForecast")]
@@ -32,6 +34,18 @@ namespace WebApi.Controllers
                 Summary = Summaries[Random.Shared.Next(Summaries.Length)]
             })
             .ToArray();
+        }
+
+        [HttpGet("bla", Name = "GetWeatherForecast2")]
+        public async Task<string> GetWeatherForecastFromDownstreamApi()
+        {
+            _logger.LogInformation("This is a second log entry");
+
+            var c = _clientFactory.CreateClient("WebApi2");
+            var r = await c.GetAsync("/weatherforecast");
+
+
+            return "";
         }
     }
 }
