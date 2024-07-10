@@ -6,11 +6,6 @@ namespace WebApi.Bff.Controllers
     [Route("[controller]")]
     public class WeatherForecastController : ControllerBase
     {
-        private static readonly string[] Summaries = new[]
-        {
-            "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
-        };
-
         private readonly ILogger<WeatherForecastController> _logger;
         private readonly IHttpClientFactory _clientFactory;
 
@@ -21,31 +16,20 @@ namespace WebApi.Bff.Controllers
         }
 
         [HttpGet(Name = "GetWeatherForecast")]
-        public IEnumerable<WeatherForecast> Get()
+        public async IAsyncEnumerable<WeatherForecast> Get()
         {
-            _logger.LogInformation("This is a first log entry");
+            _logger.LogInformation("Request entered the BFF");
 
-            throw new ArgumentOutOfRangeException("I failed on purpose");
-
-            return Enumerable.Range(1, 5).Select(index => new WeatherForecast
-            {
-                Date = DateOnly.FromDateTime(DateTime.Now.AddDays(index)),
-                TemperatureC = Random.Shared.Next(-20, 55),
-                Summary = Summaries[Random.Shared.Next(Summaries.Length)]
-            })
-            .ToArray();
-        }
-
-        [HttpGet("bla", Name = "GetWeatherForecast2")]
-        public async Task<string> GetWeatherForecastFromDownstreamApi()
-        {
-            _logger.LogInformation("This is a second log entry");
+            //throw new ArgumentOutOfRangeException("I failed on purpose");
 
             var c = _clientFactory.CreateClient("WebApi2");
             var r = await c.GetAsync("/weatherforecast");
 
+            r.EnsureSuccessStatusCode();
 
-            return "";
+            var forecasts = await r.Content.ReadFromJsonAsync<IEnumerable<WeatherForecast>>();
+            foreach (var forecast in forecasts)
+                yield return forecast;
         }
     }
 }
