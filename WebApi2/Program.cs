@@ -3,7 +3,7 @@ using CorrelationId;
 using CorrelationId.DependencyInjection;
 using System.Diagnostics;
 
-namespace WebApi2
+namespace WebApi
 {
     public class Program
     {

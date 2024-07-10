@@ -1,5 +1,5 @@
 
-namespace WebApi;
+namespace WebApi.Bff;
 
 public class Program
 {

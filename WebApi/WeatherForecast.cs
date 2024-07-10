@@ -1,4 +1,4 @@
-namespace WebApi
+namespace WebApi.Bff
 {
     public class WeatherForecast
     {
