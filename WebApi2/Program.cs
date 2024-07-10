@@ -1,5 +1,7 @@
 
 using CorrelationId;
+using CorrelationId.DependencyInjection;
+using System.Diagnostics;
 
 namespace WebApi2
 {
@@ -18,6 +20,14 @@ namespace WebApi2
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
 
+            builder.Services.AddDefaultCorrelationId(a =>
+            {
+                a.CorrelationIdGenerator = () =>
+                {
+                    return Activity.Current?.TraceId.ToString();
+                };
+            });
+
             var app = builder.Build();
 
             // Configure the HTTP request pipeline.
@@ -30,6 +40,8 @@ namespace WebApi2
             app.UseHttpsRedirection();
 
             app.UseAuthorization();
+
+            app.UseCorrelationId();
 
             app.MapControllers();
 
