@@ -1,4 +1,8 @@
 
+using CorrelationId;
+using CorrelationId.DependencyInjection;
+using System.Diagnostics;
+
 namespace WebApi.Bff;
 
 public class Program
@@ -21,6 +25,14 @@ public class Program
         builder.Services.AddEndpointsApiExplorer();
         builder.Services.AddSwaggerGen();
 
+        builder.Services.AddDefaultCorrelationId(a =>
+        {
+            a.CorrelationIdGenerator = () =>
+            {
+                return Activity.Current?.TraceId.ToString();
+            };
+        });
+
         var app = builder.Build();
 
         // Configure the HTTP request pipeline.
@@ -34,8 +46,9 @@ public class Program
 
         app.UseAuthorization();
 
-        app.UseMiddleware<ExceptionHandlingMiddleware>();
+        //app.UseMiddleware<ExceptionHandlingMiddleware>();
 
+        app.UseCorrelationId();
 
         app.MapControllers();
 
